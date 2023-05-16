@@ -7,6 +7,8 @@ import java.awt.Graphics2D;
 import javax.swing.JPanel;
 
 import Entity.Player;
+import Mon_green.MON_Green;
+import boom.boomit;
 import objects.SuperClass;
 import tile.TileManager;
 
@@ -30,10 +32,15 @@ public class GamePanel extends JPanel implements Runnable {
 	TileManager tileM = new TileManager(this);
 	KeyHandler keyH = new KeyHandler();
 	Thread gameThread;
+	public CollisionChecker cChecker = new CollisionChecker (this);
+	
 	
 	Player player = new Player(this,keyH);
-	SuperClass obj[]= new SuperClass[10];
+	public SuperClass obj[]= new SuperClass[10];
+	public MON_Green[]  mons = new MON_Green[10];
+	public boomit [] boom = new boomit[1000];
 	AssetSetter aSetter = new AssetSetter(this);
+	public UI ui = new UI( this);
 	 
 	 //Set player's position
 	 //int playerX = 100;
@@ -51,6 +58,8 @@ public class GamePanel extends JPanel implements Runnable {
 	}
 	public void setupGame() {
 		aSetter.setObject();
+		aSetter.setMon();
+
 	}
 	
 	
@@ -96,6 +105,9 @@ public class GamePanel extends JPanel implements Runnable {
 		double delta = 0;
 		long lastTime  = System.nanoTime();
 		long currentTime;
+		long timer = 0;
+		int drawCount = 0;
+		
 		
 		
 		
@@ -107,6 +119,13 @@ public class GamePanel extends JPanel implements Runnable {
 				update();
 				repaint();
 				delta--;
+				drawCount++;
+			}
+			if(timer > 1000000000) {
+				System.out.println("FPS: "+ drawCount);
+				drawCount = 0;
+				timer = 0;
+				
 				
 			}
 			
@@ -116,6 +135,12 @@ public class GamePanel extends JPanel implements Runnable {
 	public void update() {
 		
 		player.update();
+		
+		for (int i = 0; i < mons.length; i ++) {
+			if( mons[i] != null) {
+				mons[i].update();
+			}
+		}
 		
 		
 	}
@@ -127,17 +152,43 @@ public class GamePanel extends JPanel implements Runnable {
 		tileM.draw(g2);
 		//OBJECT
 	
-			obj[1].draw(g2,this);
-			obj[2].draw(g2,this);
-			obj[0].draw(g2,this);
+		for (int i =0; i < this.obj.length;i++) {
+			if(obj[i] != null) {
+				obj[i].draw(g2, this);
+				
+			}
 			
+		}
+		
+		//MOnster
+		for(int i = 0; i < mons.length; i++) {
+			if(mons[i] != null) {
+			mons[i].draw(g2);
+			}
+		}
+		//BOOM
+				for (int i =1; i < this.boom.length;i++) {
+					if(boom[i] != null) {
+						boom[i].draw(g2,this);
+						
+					}
+					
+				}
+				
 	
 	
 		//PLAYER
 		player.draw(g2);
+		
+		
+		
+		// UI
+		ui.draw(g2);
+		ui.drawPlayerLife(g2);
+		
+		
 		g2.dispose();
 
-		
 		
 		
 		
