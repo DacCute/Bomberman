@@ -1,5 +1,11 @@
 package main;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.time.Instant;
+
+import object.Explode;
 import object.Obj_Power;
 import object.Obj_Speed;
 import object.Obj_bomb;
@@ -28,13 +34,12 @@ public class AssetSetter {
 
     }
 
-    public void preObject(int index) {
-        index += 2;
-        gp.obj[index] = new Obj_bomb();
+    public void PlantBomb() {
+        gp.obj[3] = new Obj_bomb();
         double x = (double) (gp.player.worldX - 24) / 48;
         double y = (double) (gp.player.worldY - 24) / 48;
-        gp.obj[index].worldX = (int) (Math.ceil(x) * 48);
-        gp.obj[index].worldY = (int) (Math.ceil(y) * 48);
+        gp.obj[3].worldX = (int) (Math.ceil(x) * 48);
+        gp.obj[3].worldY = (int) (Math.ceil(y) * 48);
     }
 
 }
