@@ -1,11 +1,5 @@
 package main;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.time.Instant;
-
-import object.Explode;
 import object.Obj_Power;
 import object.Obj_Speed;
 import object.Obj_bomb;
