@@ -8,6 +8,8 @@ import javax.imageio.ImageIO;
 
 import main.GamePanel;
 import main.KeyHandler;
+import object.Explode;
+import object.Obj_bomb;
 
 public class Player extends Entity {
 
@@ -15,6 +17,8 @@ public class Player extends Entity {
     KeyHandler keyH;
     public final int screenX;
     public final int screenY;
+    public long start = 0;
+    public long end = 0;
 
     public Player(GamePanel gp, KeyHandler keyH) {
         this.gp = gp;
@@ -25,11 +29,11 @@ public class Player extends Entity {
 
         solidArea = new Rectangle(0, 0, 20, 24);
         solidArea.x = 14;
-        solidArea.y = 16;
+        solidArea.y = 18;
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
         solidArea.width = 20;
-        solidArea.height = 32;
+        solidArea.height = 24;
 
         setDefaultvalues();
         getPlayerImage();
@@ -42,7 +46,7 @@ public class Player extends Entity {
         speed = 4;
         power = 1;
         action = "down";
-        index = 1; // Max bomb at the same time
+        // index = 3; // Max bomb at the same time
         getPlayerImage();
     }
 
@@ -87,9 +91,6 @@ public class Player extends Entity {
             int objectIndex = gp.Colcheck.checkObject(this, true);
             if (objectIndex < 3)
                 pickItem(objectIndex);
-            else {
-
-            }
 
             // Action after check
             if (collisionOn == false) {
@@ -141,6 +142,27 @@ public class Player extends Entity {
         }
     }
 
+    public void PlantBomb() {
+        gp.obj[3] = new Obj_bomb();
+        double x = (double) (gp.player.worldX - 24) / 48;
+        double y = (double) (gp.player.worldY - 24) / 48;
+        gp.obj[3].worldX = (int) (Math.ceil(x) * 48);
+        gp.obj[3].worldY = (int) (Math.ceil(y) * 48);
+
+    }
+
+    public void Explosion() {
+        int x = gp.obj[3].worldX;
+        int y = gp.obj[3].worldY;
+        gp.obj[3] = new Explode();
+        gp.obj[3].worldX = x;
+        gp.obj[3].worldY = y;
+    }
+
+    public void Bomb_remove() {
+        gp.obj[3] = null;
+    }
+
     BufferedImage image = null;
 
     public void draw(Graphics2D g2) {
@@ -171,11 +193,26 @@ public class Player extends Entity {
                     image = right2;
                 break;
             case "bomb":
-                gp.aSetter.preObject(index);
+                if (gp.obj[3] == null) {
+                    start = System.nanoTime();
+                    PlantBomb();
+                }
                 break;
+        }
+        if (start > 0) {
+            end = System.nanoTime();
+        }
+        if ((end - start) / 1e9 >= 3) {
+            Explosion();
+            if ((end - start) / 1e9 >= 4) {
+                Bomb_remove();
+                start = 0;
+                end = 0;
+            }
         }
 
         g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+
         g2.dispose(); // same but stronger than System.exit()
 
     }
