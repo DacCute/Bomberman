@@ -73,6 +73,11 @@ public class Player extends Entity {
     }
 
     public void update() {
+        boolean monster_check = gp.Colcheck.check_monster(this, true);
+        if (monster_check) {
+            lives -= 1;
+            System.out.println("your remain lives: " + lives);
+        }
 
         if (keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed || keyH.spaceBomb) {
             if (keyH.upPressed == true) {
@@ -95,12 +100,6 @@ public class Player extends Entity {
             int objectIndex = gp.Colcheck.checkObject(this, true);
             if (objectIndex < 3)
                 pickItem(objectIndex);
-
-            boolean monster_check = gp.Colcheck.check_monster(this, true);
-            if (monster_check) {
-                lives -= 1;
-                System.out.println("your remain lives: " + lives);
-            }
 
             // Action after check
             if (collisionOn == false) {
@@ -179,18 +178,39 @@ public class Player extends Entity {
     public boolean bomb_inside(int obj_x, int obj_y, int bomb_x, int bomb_y) {
         boolean check = false;
 
-        if (obj_x / gp.tileSize == bomb_x) {
-            if (obj_y / gp.tileSize <= bomb_y + power
-                    && obj_y / gp.tileSize >= bomb_y - power) {
-                System.out.println("1");
-                check = true;
+        if (obj_x == bomb_x) {
+            for (int i = bomb_y; i >= bomb_y - power; --i) {
+                if (gp.tileM.MapTileNum[bomb_x][i] != 1) {
+                    if (obj_y == i) {
+                        check = true;
+                    }
+                } else
+                    break;
             }
-        } else if (obj_y / gp.tileSize == bomb_y) {
-            if ((obj_x + gp.tileSize / 2) / gp.tileSize <= bomb_x + power
-                    && (obj_x + gp.tileSize / 2) / gp.tileSize >= bomb_x - power) {
-                System.out.println(bomb_x + " + " + power);
-                System.out.println(obj_x / gp.tileSize);
-                check = true;
+            for (int i = bomb_y; i <= bomb_y + power; ++i) {
+                if (gp.tileM.MapTileNum[bomb_x][i] != 1) {
+                    if (obj_y == i) {
+                        check = true;
+                    }
+                } else
+                    break;
+            }
+        } else if (obj_y == bomb_y) {
+            for (int i = bomb_x; i >= bomb_x - power; --i) {
+                if (gp.tileM.MapTileNum[i][bomb_y] != 1) {
+                    if (obj_x == i) {
+                        check = true;
+                    }
+                } else
+                    break;
+            }
+            for (int i = bomb_x; i <= bomb_x + power; ++i) {
+                if (gp.tileM.MapTileNum[i][bomb_y] != 1) {
+                    if (obj_x == i) {
+                        check = true;
+                    }
+                } else
+                    break;
             }
         }
 
@@ -198,7 +218,8 @@ public class Player extends Entity {
     }
 
     public void kill(int x, int y) {
-        if (bomb_inside(gp.player.worldX - gp.tileSize / 2, gp.player.worldY + gp.tileSize / 2, x, y)) {
+
+        if (bomb_inside(gp.player.worldX / gp.tileSize, (gp.player.worldY + 30) / gp.tileSize, x, y)) {
             gp.player.lives -= 1;
             System.out.println("Your lives remain: " + gp.player.lives);
             if (gp.player.lives == 0) {
@@ -207,16 +228,57 @@ public class Player extends Entity {
         }
 
         for (int i = 0; i < gp.mons.length; ++i) {
-
             if (gp.mons[i] != null) {
-                if (bomb_inside(gp.mons[i].worldX - (gp.tileSize / 2), gp.mons[i].worldY + (gp.tileSize / 2), x, y)) {
+                if (bomb_inside(gp.mons[i].worldX / gp.tileSize, gp.mons[i].worldY / gp.tileSize, x, y)) {
                     System.out.println("You got him");
                     gp.mons[i] = null;
                     score += 100;
                 }
             }
         }
+    }
 
+    public void Explosion_test() {
+        int x = gp.obj[3].worldX;
+        int y = gp.obj[3].worldY;
+        gp.obj[3] = new Explode();
+        gp.obj[3].worldX = x;
+        gp.obj[3].worldY = y;
+        x /= gp.tileSize;
+        y /= gp.tileSize;
+
+        for (int i = 1; i <= power; ++i) {
+            // Explosion Right
+            if (x + i < gp.maxWorldCol)
+                if (gp.tileM.MapTileNum[x + i][y] != 1 && gp.tileM.MapTileNum[x + i - 1][y] != 1) {
+                    gp.tileM.MapTileNum[x + i][y] = 0;
+
+                    expanding(x, y, i, i, 0);
+                }
+            // Explosion Left
+            if (x - i > 0)
+                if (gp.tileM.MapTileNum[x - i][y] != 1 && gp.tileM.MapTileNum[x - i + 1][y] != 1) {
+                    gp.tileM.MapTileNum[x - i][y] = 0;
+
+                    expanding(x, y, i + 2, -i, 0);
+                }
+            // Explosion Down
+            if (y + i < gp.maxWorldRow)
+                if (gp.tileM.MapTileNum[x][y + i] != 1 && gp.tileM.MapTileNum[x][y + i - 1] != 1) {
+                    gp.tileM.MapTileNum[x][y + i] = 0;
+
+                    expanding(x, y, i + 4, 0, i);
+                }
+            // Explosion Up
+            if (y - i > 0)
+                if (gp.tileM.MapTileNum[x][y - i] != 1 && gp.tileM.MapTileNum[x][y - i + 1] != 1) {
+                    gp.tileM.MapTileNum[x][y - i] = 0;
+
+                    expanding(x, y, i + 6, 0, -i);
+                }
+        }
+
+        kill(x, y);
     }
 
     public void Explosion() {

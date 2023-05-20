@@ -15,13 +15,13 @@ public class Monster extends Entity {
         this.gp = gp;
 
         // name = "Green Monster";
-        speed = 1;
-        action = "down";
+        speed = 4;
+        action = "up";
 
         solidArea = new Rectangle();
-        solidArea.x = 3;
+        solidArea.x = 14;
         solidArea.y = 18;
-        solidArea.width = 45;
+        solidArea.width = 30;
         solidArea.height = 30;
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
@@ -50,22 +50,22 @@ public class Monster extends Entity {
 
     public void setAction() {
         actionLockCounter++;
-        if (actionLockCounter == 120) {
+        if (actionLockCounter == 40) {
 
             Random random = new Random();
-            int i = random.nextInt(100) + 1;// pick up a number from 1 to 100
-            if (i <= 25) {
+            int i = random.nextInt(4) + 1;// pick up a number from 1 to 100
+            if (i == 1) {
                 action = "up";
             }
-            if (i > 25 && i <= 50) {
+            if (i == 2) {
                 action = "down";
 
             }
-            if (i > 50 && i <= 75) {
+            if (i == 3) {
                 action = "left";
 
             }
-            if (i > 75 && i <= 100) {
+            if (i == 4) {
                 action = "right";
             }
 
