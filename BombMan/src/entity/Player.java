@@ -155,10 +155,10 @@ public class Player extends Entity {
 
     public void PlantBomb() {
         gp.obj[3] = new Obj_bomb();
-        double x = (double) (gp.player.worldX - 24) / 48;
-        double y = (double) (gp.player.worldY - 24) / 48;
-        gp.obj[3].worldX = (int) (Math.ceil(x) * 48);
-        gp.obj[3].worldY = (int) (Math.ceil(y) * 48);
+        double x = (double) (gp.player.worldX - gp.tileSize / 2) / gp.tileSize;
+        double y = (double) (gp.player.worldY - gp.tileSize / 2) / gp.tileSize;
+        gp.obj[3].worldX = (int) (Math.ceil(x) * gp.tileSize);
+        gp.obj[3].worldY = (int) (Math.ceil(y) * gp.tileSize);
     }
 
     public void Duration() {
@@ -178,28 +178,27 @@ public class Player extends Entity {
 
     public boolean bomb_inside(int obj_x, int obj_y, int bomb_x, int bomb_y) {
         boolean check = false;
-        obj_x += gp.tileSize / 2;
-        obj_y += gp.tileSize / 5 * 4;
 
         if (obj_x / gp.tileSize == bomb_x) {
             if (obj_y / gp.tileSize <= bomb_y + power
                     && obj_y / gp.tileSize >= bomb_y - power) {
+                System.out.println("1");
                 check = true;
             }
-        } else if (obj_x / gp.tileSize <= bomb_x + power) {
-            if (obj_y / gp.tileSize == bomb_y) {
-                check = true;
-            }
-        } else if (obj_x / gp.tileSize >= bomb_x - power) {
-            if (obj_y / gp.tileSize == bomb_y) {
+        } else if (obj_y / gp.tileSize == bomb_y) {
+            if ((obj_x + gp.tileSize / 2) / gp.tileSize <= bomb_x + power
+                    && (obj_x + gp.tileSize / 2) / gp.tileSize >= bomb_x - power) {
+                System.out.println(bomb_x + " + " + power);
+                System.out.println(obj_x / gp.tileSize);
                 check = true;
             }
         }
+
         return check;
     }
 
     public void kill(int x, int y) {
-        if (bomb_inside(worldX, worldY, x, y)) {
+        if (bomb_inside(gp.player.worldX - gp.tileSize / 2, gp.player.worldY + gp.tileSize / 2, x, y)) {
             gp.player.lives -= 1;
             System.out.println("Your lives remain: " + gp.player.lives);
             if (gp.player.lives == 0) {
@@ -210,7 +209,7 @@ public class Player extends Entity {
         for (int i = 0; i < gp.mons.length; ++i) {
 
             if (gp.mons[i] != null) {
-                if (bomb_inside(gp.mons[i].worldX, gp.mons[i].worldY, x, y)) {
+                if (bomb_inside(gp.mons[i].worldX - (gp.tileSize / 2), gp.mons[i].worldY + (gp.tileSize / 2), x, y)) {
                     System.out.println("You got him");
                     gp.mons[i] = null;
                     score += 100;
