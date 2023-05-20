@@ -9,7 +9,7 @@ public class Entity {
     GamePanel gp;
 
     public int worldX, worldY;
-    public int speed = 1;
+    public int speed = 4;
     public int power;
     public int lives;
     // public int index;
@@ -93,7 +93,7 @@ public class Entity {
         gp.Colcheck.checkTile(this);
 
         // CHeck Object collision
-        int objectIndex = gp.Colcheck.checkObject(this, false);
+        // int objectIndex = gp.Colcheck.checkObject(this, false);
 
         if (collisionOn == false) {
 
