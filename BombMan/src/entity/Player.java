@@ -13,27 +13,29 @@ import object.Obj_bomb;
 
 public class Player extends Entity {
 
-    GamePanel gp;
+    protected GamePanel gp;
     KeyHandler keyH;
     public final int screenX;
     public final int screenY;
     public long start = 0;
     public long end = 0;
+    int lives_minus = 0;
+    public long score = 0;
 
     public Player(GamePanel gp, KeyHandler keyH) {
+        super(gp);
         this.gp = gp;
         this.keyH = keyH;
-
         screenX = gp.screenWidth / 2 - (gp.tileSize / 2);
         screenY = gp.screenHeight / 2 - (gp.tileSize / 2);
 
-        solidArea = new Rectangle(0, 0, 20, 24);
-        solidArea.x = 14;
-        solidArea.y = 18;
+        solidArea = new Rectangle(0, 0, 34, 30);
+        solidArea.x = 10;
+        solidArea.y = 14;
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
-        solidArea.width = 20;
-        solidArea.height = 24;
+        solidArea.width = 28;
+        solidArea.height = 28;
 
         setDefaultvalues();
         getPlayerImage();
@@ -43,11 +45,13 @@ public class Player extends Entity {
 
         worldX = gp.tileSize * 1;
         worldY = gp.tileSize * 1;
+        lives = 100;
         speed = 4;
         power = 1;
         action = "down";
         // index = 3; // Max bomb at the same time
         getPlayerImage();
+
     }
 
     public void getPlayerImage() {
@@ -60,7 +64,7 @@ public class Player extends Entity {
             left2 = ImageIO.read(getClass().getResourceAsStream("/player/left_2.png"));
             right1 = ImageIO.read(getClass().getResourceAsStream("/player/right_1.png"));
             right2 = ImageIO.read(getClass().getResourceAsStream("/player/right_2.png"));
-            bomb = ImageIO.read(getClass().getResourceAsStream("/object/bomb.png"));
+            // bomb = ImageIO.read(getClass().getResourceAsStream("/object/bomb.png"));
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -92,6 +96,12 @@ public class Player extends Entity {
             if (objectIndex < 3)
                 pickItem(objectIndex);
 
+            boolean monster_check = gp.Colcheck.check_monster(this, true);
+            if (monster_check) {
+                lives -= 1;
+                System.out.println("your remain lives: " + lives);
+            }
+
             // Action after check
             if (collisionOn == false) {
                 switch (action) {
@@ -121,6 +131,7 @@ public class Player extends Entity {
                 spriteCounter = 0;
             }
         }
+
     }
 
     public void pickItem(int index) {
@@ -136,8 +147,8 @@ public class Player extends Entity {
                     System.out.println("Speed +1");
                     break;
                 case 2:
-                    this.lives += 1;
-                    System.out.println("Lives +1");
+                    this.lives += 100;
+                    System.out.println("Lives +100");
             }
         }
     }
@@ -148,6 +159,64 @@ public class Player extends Entity {
         double y = (double) (gp.player.worldY - 24) / 48;
         gp.obj[3].worldX = (int) (Math.ceil(x) * 48);
         gp.obj[3].worldY = (int) (Math.ceil(y) * 48);
+    }
+
+    public void Duration() {
+        if (start > 0) {
+            end = System.nanoTime();
+        }
+        if ((end - start) / 1e9 >= 1.5) {
+            Explosion();
+            if ((end - start) / 1e9 >= 2) {
+                Bomb_remove();
+                start = 0;
+                end = 0;
+            }
+        }
+
+    }
+
+    public boolean bomb_inside(int obj_x, int obj_y, int bomb_x, int bomb_y) {
+        boolean check = false;
+        obj_x += gp.tileSize / 2;
+        obj_y += gp.tileSize / 5 * 4;
+
+        if (obj_x / gp.tileSize == bomb_x) {
+            if (obj_y / gp.tileSize <= bomb_y + power
+                    && obj_y / gp.tileSize >= bomb_y - power) {
+                check = true;
+            }
+        } else if (obj_x / gp.tileSize <= bomb_x + power) {
+            if (obj_y / gp.tileSize == bomb_y) {
+                check = true;
+            }
+        } else if (obj_x / gp.tileSize >= bomb_x - power) {
+            if (obj_y / gp.tileSize == bomb_y) {
+                check = true;
+            }
+        }
+        return check;
+    }
+
+    public void kill(int x, int y) {
+        if (bomb_inside(worldX, worldY, x, y)) {
+            gp.player.lives -= 1;
+            System.out.println("Your lives remain: " + gp.player.lives);
+            if (gp.player.lives == 0) {
+                System.out.println("Game over");
+            }
+        }
+
+        for (int i = 0; i < gp.mons.length; ++i) {
+
+            if (gp.mons[i] != null) {
+                if (bomb_inside(gp.mons[i].worldX, gp.mons[i].worldY, x, y)) {
+                    System.out.println("You got him");
+                    gp.mons[i] = null;
+                    score += 100;
+                }
+            }
+        }
 
     }
 
@@ -157,10 +226,66 @@ public class Player extends Entity {
         gp.obj[3] = new Explode();
         gp.obj[3].worldX = x;
         gp.obj[3].worldY = y;
+        x /= gp.tileSize;
+        y /= gp.tileSize;
+
+        kill(x, y);
+
+        for (int i = 1; i <= power; ++i) {
+
+            // Explosion Right
+            if (x + i < gp.maxWorldCol)
+                if (gp.tileM.MapTileNum[x + i][y] != 1 && gp.tileM.MapTileNum[x + i - 1][y] != 1) {
+                    gp.tileM.MapTileNum[x + i][y] = 0;
+
+                    expanding(x, y, i, i, 0);
+                }
+            // Explosion Left
+            if (x - i > 0)
+                if (gp.tileM.MapTileNum[x - i][y] != 1 && gp.tileM.MapTileNum[x - i + 1][y] != 1) {
+                    gp.tileM.MapTileNum[x - i][y] = 0;
+
+                    expanding(x, y, i + 2, -i, 0);
+                }
+            // Explosion Down
+            if (y + i < gp.maxWorldRow)
+                if (gp.tileM.MapTileNum[x][y + i] != 1 && gp.tileM.MapTileNum[x][y + i - 1] != 1) {
+                    gp.tileM.MapTileNum[x][y + i] = 0;
+
+                    expanding(x, y, i + 4, 0, i);
+                }
+            // Explosion Up
+            if (y - i > 0)
+                if (gp.tileM.MapTileNum[x][y - i] != 1 && gp.tileM.MapTileNum[x][y - i + 1] != 1) {
+                    gp.tileM.MapTileNum[x][y - i] = 0;
+
+                    expanding(x, y, i + 6, 0, -i);
+                }
+        }
+    }
+
+    public void expanding(int x, int y, int i, int xi, int yi) {
+        gp.obj[3 + i] = new Explode();
+        gp.obj[3 + i].worldX = (x + xi) * gp.tileSize;
+        gp.obj[3 + i].worldY = (y + yi) * gp.tileSize;
     }
 
     public void Bomb_remove() {
         gp.obj[3] = null;
+        for (int i = 1; i <= power; ++i) {
+            if (gp.obj[3 + i] != null) {
+                gp.obj[3 + i] = null;
+            }
+            if (gp.obj[3 + i + 2] != null) {
+                gp.obj[3 + i + 2] = null;
+            }
+            if (gp.obj[3 + i + 4] != null) {
+                gp.obj[3 + i + 4] = null;
+            }
+            if (gp.obj[3 + i + 6] != null) {
+                gp.obj[3 + i + 6] = null;
+            }
+        }
     }
 
     BufferedImage image = null;
@@ -194,26 +319,16 @@ public class Player extends Entity {
                 break;
             case "bomb":
                 if (gp.obj[3] == null) {
-                    start = System.nanoTime();
                     PlantBomb();
+                    start = System.nanoTime();
                 }
                 break;
         }
-        if (start > 0) {
-            end = System.nanoTime();
-        }
-        if ((end - start) / 1e9 >= 3) {
-            Explosion();
-            if ((end - start) / 1e9 >= 4) {
-                Bomb_remove();
-                start = 0;
-                end = 0;
-            }
-        }
+        Duration();
 
         g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
 
-        g2.dispose(); // same but stronger than System.exit()
+        // g2.dispose(); // same but stronger than System.exit()
 
     }
 

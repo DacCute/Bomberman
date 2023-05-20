@@ -1,8 +1,8 @@
 package main;
 
+import entity.Monster;
 import object.Obj_Power;
 import object.Obj_Speed;
-import object.Obj_bomb;
 import object.Obj_lives;
 
 public class AssetSetter {
@@ -28,13 +28,18 @@ public class AssetSetter {
 
     }
 
-    public void preObject(int index) {
-        index += 2;
-        gp.obj[index] = new Obj_bomb();
-        double x = (double) (gp.player.worldX - 24) / 48;
-        double y = (double) (gp.player.worldY - 24) / 48;
-        gp.obj[index].worldX = (int) (Math.ceil(x) * 48);
-        gp.obj[index].worldY = (int) (Math.ceil(y) * 48);
+    public void setMon() {
+        gp.mons[0] = new Monster(gp);
+        gp.mons[0].worldX = gp.tileSize * 3;
+        gp.mons[0].worldY = gp.tileSize * 4;
+
+        gp.mons[1] = new Monster(gp);
+        gp.mons[1].worldX = gp.tileSize * 5;
+        gp.mons[1].worldY = gp.tileSize * 3;
+
+        // gp.mons[2] = new Monster(gp);
+        // gp.mons[2].worldX = gp.tileSize * 20;
+        // gp.mons[2].worldY = gp.tileSize * 9;
     }
 
 }

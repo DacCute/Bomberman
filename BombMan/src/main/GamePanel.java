@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
+import entity.Monster;
 import entity.Player;
 import object.SuperObject;
 import tile.TileManager;
@@ -17,7 +18,7 @@ public class GamePanel extends JPanel implements Runnable {
     final int scale = 3;
 
     public final int tileSize = originalTileSize * scale;
-    public final int maxScreenCol = 24; // set size the screen and map
+    public final int maxScreenCol = 27; // set size the screen and map
     public final int maxScreenRow = 12; // set size the screen and map
     public final int screenWidth = tileSize * maxScreenCol;
     public final int screenHeight = tileSize * maxScreenRow;
@@ -30,7 +31,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     int FPS = 60;
 
-    TileManager tileM = new TileManager(this);
+    public TileManager tileM = new TileManager(this);
     KeyHandler keyH = new KeyHandler();
     Thread gameThread;
 
@@ -38,13 +39,14 @@ public class GamePanel extends JPanel implements Runnable {
 
     public Player player = new Player(this, keyH);
 
-    public SuperObject obj[] = new SuperObject[10];
+    public SuperObject obj[] = new SuperObject[20];
+    public Monster mons[] = new Monster[10];
     // seting object value
     public AssetSetter aSetter = new AssetSetter(this);
 
     // Player position default:
-    int playerX = 50;
-    int playerY = 50;
+    int playerX = 1;
+    int playerY = 1;
     int playerSpeed = 4;
 
     public GamePanel() {
@@ -59,7 +61,8 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void setupGame() {
         aSetter.setObject();
-        // aSetter.preObject();
+        aSetter.setMon();
+
     }
 
     public void startGameThread() {
@@ -93,7 +96,10 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void update() {
-
+        for (int i = 0; i < mons.length; ++i) {
+            if (mons[i] != null)
+                mons[i].update();
+        }
         player.update();
 
     }
@@ -111,9 +117,14 @@ public class GamePanel extends JPanel implements Runnable {
                 obj[i].draw(g2, this);
             }
         }
-
         // Player drawing
         player.draw(g2);
+        // Monster drawing
+        for (int i = 0; i < mons.length; i++) {
+            if (mons[i] != null) {
+                mons[i].draw(g2, this);
+            }
+        }
 
         g2.dispose();
 
