@@ -10,7 +10,7 @@ public class SuperObject {
     public BufferedImage image;
     public String img_path;
     public String name;
-    public boolean collision = false;
+    public boolean collision = true;
     public int worldX, worldY;
     public Rectangle solidArea = new Rectangle(0, 0, 48, 48);
 
@@ -29,12 +29,5 @@ public class SuperObject {
         }
 
     }
-
-    // public void drawBomb(Graphics2D g2, GamePanel gp) {
-    // int screenX = worldX - gp.player.worldX + gp.player.screenX;
-    // int screenY = worldY - gp.player.worldY + gp.player.screenY;
-    // g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
-
-    // }
 
 }
