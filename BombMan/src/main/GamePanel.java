@@ -43,6 +43,7 @@ public class GamePanel extends JPanel implements Runnable {
     public Monster mons[] = new Monster[10];
     // seting object value
     public AssetSetter aSetter = new AssetSetter(this);
+    public Random_item gacha = new Random_item(this);
 
     // Player position default:
     int playerX = 1;
@@ -61,6 +62,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void setupGame() {
         aSetter.setObject();
+
         aSetter.setMon();
 
     }

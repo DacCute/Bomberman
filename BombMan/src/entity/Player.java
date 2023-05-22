@@ -220,7 +220,7 @@ public class Player extends Entity {
     public void kill(int x, int y) {
 
         if (bomb_inside(gp.player.worldX / gp.tileSize, (gp.player.worldY + 30) / gp.tileSize, x, y)) {
-            gp.player.lives -= 1;
+            gp.player.lives -= lives_minus;
             System.out.println("Your lives remain: " + gp.player.lives);
             if (gp.player.lives == 0) {
                 System.out.println("Game over");
@@ -229,56 +229,15 @@ public class Player extends Entity {
 
         for (int i = 0; i < gp.mons.length; ++i) {
             if (gp.mons[i] != null) {
-                if (bomb_inside(gp.mons[i].worldX / gp.tileSize, gp.mons[i].worldY / gp.tileSize, x, y)) {
+                if (bomb_inside((gp.mons[i].worldX + gp.mons[i].solidArea.width) / gp.tileSize,
+                        (gp.mons[i].worldY + +gp.mons[i].solidArea.width) / gp.tileSize, x, y)) {
+
                     System.out.println("You got him");
                     gp.mons[i] = null;
                     score += 100;
                 }
             }
         }
-    }
-
-    public void Explosion_test() {
-        int x = gp.obj[3].worldX;
-        int y = gp.obj[3].worldY;
-        gp.obj[3] = new Explode();
-        gp.obj[3].worldX = x;
-        gp.obj[3].worldY = y;
-        x /= gp.tileSize;
-        y /= gp.tileSize;
-
-        for (int i = 1; i <= power; ++i) {
-            // Explosion Right
-            if (x + i < gp.maxWorldCol)
-                if (gp.tileM.MapTileNum[x + i][y] != 1 && gp.tileM.MapTileNum[x + i - 1][y] != 1) {
-                    gp.tileM.MapTileNum[x + i][y] = 0;
-
-                    expanding(x, y, i, i, 0);
-                }
-            // Explosion Left
-            if (x - i > 0)
-                if (gp.tileM.MapTileNum[x - i][y] != 1 && gp.tileM.MapTileNum[x - i + 1][y] != 1) {
-                    gp.tileM.MapTileNum[x - i][y] = 0;
-
-                    expanding(x, y, i + 2, -i, 0);
-                }
-            // Explosion Down
-            if (y + i < gp.maxWorldRow)
-                if (gp.tileM.MapTileNum[x][y + i] != 1 && gp.tileM.MapTileNum[x][y + i - 1] != 1) {
-                    gp.tileM.MapTileNum[x][y + i] = 0;
-
-                    expanding(x, y, i + 4, 0, i);
-                }
-            // Explosion Up
-            if (y - i > 0)
-                if (gp.tileM.MapTileNum[x][y - i] != 1 && gp.tileM.MapTileNum[x][y - i + 1] != 1) {
-                    gp.tileM.MapTileNum[x][y - i] = 0;
-
-                    expanding(x, y, i + 6, 0, -i);
-                }
-        }
-
-        kill(x, y);
     }
 
     public void Explosion() {
@@ -297,30 +256,26 @@ public class Player extends Entity {
             // Explosion Right
             if (x + i < gp.maxWorldCol)
                 if (gp.tileM.MapTileNum[x + i][y] != 1 && gp.tileM.MapTileNum[x + i - 1][y] != 1) {
-                    gp.tileM.MapTileNum[x + i][y] = 0;
-
                     expanding(x, y, i, i, 0);
+                    gp.tileM.MapTileNum[x + i][y] = 0;
                 }
             // Explosion Left
             if (x - i > 0)
                 if (gp.tileM.MapTileNum[x - i][y] != 1 && gp.tileM.MapTileNum[x - i + 1][y] != 1) {
-                    gp.tileM.MapTileNum[x - i][y] = 0;
-
                     expanding(x, y, i + 2, -i, 0);
+                    gp.tileM.MapTileNum[x - i][y] = 0;
                 }
             // Explosion Down
             if (y + i < gp.maxWorldRow)
                 if (gp.tileM.MapTileNum[x][y + i] != 1 && gp.tileM.MapTileNum[x][y + i - 1] != 1) {
-                    gp.tileM.MapTileNum[x][y + i] = 0;
-
                     expanding(x, y, i + 4, 0, i);
+                    gp.tileM.MapTileNum[x][y + i] = 0;
                 }
             // Explosion Up
             if (y - i > 0)
                 if (gp.tileM.MapTileNum[x][y - i] != 1 && gp.tileM.MapTileNum[x][y - i + 1] != 1) {
-                    gp.tileM.MapTileNum[x][y - i] = 0;
-
                     expanding(x, y, i + 6, 0, -i);
+                    gp.tileM.MapTileNum[x][y - i] = 0;
                 }
         }
     }
@@ -329,6 +284,31 @@ public class Player extends Entity {
         gp.obj[3 + i] = new Explode();
         gp.obj[3 + i].worldX = (x + xi) * gp.tileSize;
         gp.obj[3 + i].worldY = (y + yi) * gp.tileSize;
+        int gacha_result = gp.gacha.random_item(gp.tileM.MapTileNum[x + xi][y + yi], x + xi, y + yi);
+        // System.out.println(gacha_result);
+        switch (gacha_result) {
+            case 0:
+                if (power_count == 0) {
+                    power_count = 1;
+                } else {
+                    gp.obj[0] = null;
+                }
+                break;
+            case 1:
+                if (speed_count == 0) {
+                    speed_count = 1;
+                } else {
+                    gp.obj[1] = null;
+                }
+                break;
+            case 2:
+                if (lives_count == 0) {
+                    lives_count = 1;
+                } else {
+                    gp.obj[2] = null;
+                }
+                break;
+        }
     }
 
     public void Bomb_remove() {
