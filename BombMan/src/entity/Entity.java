@@ -10,8 +10,12 @@ public class Entity {
 
     public int worldX, worldY;
     public int speed = 4;
+    public int speed_count = 0;
     public int power;
+    public int power_count = 0;
     public int lives;
+    public int lives_count = 0;
+
     // public int index;
 
     public BufferedImage up1, up2, down1, down2, left1, left2, right1, right2, bomb, boom;
@@ -91,9 +95,6 @@ public class Entity {
         // Check the collision
         collisionOn = false;
         gp.Colcheck.checkTile(this);
-
-        // CHeck Object collision
-        // int objectIndex = gp.Colcheck.checkObject(this, false);
 
         if (collisionOn == false) {
 
