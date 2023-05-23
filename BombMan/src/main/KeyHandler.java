@@ -81,7 +81,6 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_SPACE: {
                 spaceBomb = false;
             }
-
         }
     }
 

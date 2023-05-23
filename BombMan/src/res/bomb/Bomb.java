@@ -47,10 +47,13 @@ public class Bomb extends Entity {
 
     public void Duration(int index) { // DONE
         if (start > 0) {
+
             gp.bombs[index].status = 0;
             end = System.nanoTime();
         }
         if ((end - start) / 1e9 >= 1.5) {
+            gp.playSE(4);
+
             gp.bombs[index].status = 2;
             Explosion(index);
 
@@ -66,7 +69,7 @@ public class Bomb extends Entity {
     }
 
     public boolean bomb_inside(int obj_x, int obj_y, int bomb_x, int bomb_y) { // DONE
-        expanding(bomb_x, bomb_y, 0);
+        // expanding(bomb_x, bomb_y, 0);
         boolean check = false;
 
         if (obj_x == bomb_x) {
@@ -122,15 +125,16 @@ public class Bomb extends Entity {
                     break;
             }
         }
-        System.out.println(check);
+        // System.out.println(check);
         return check;
     }
 
     public void kill(int x, int y) { // DONE
 
-        if (bomb_inside((gp.player.worldX) / gp.tileSize, (gp.player.worldY) / gp.tileSize, x, y)) {
+        if (bomb_inside((gp.player.worldX + gp.tileSize / 2) / gp.tileSize,
+                (gp.player.worldY + gp.tileSize / 2) / gp.tileSize, x, y)) {
             gp.player.lives -= 1;
-            // System.out.println("Your lives remain: " + gp.player.lives);
+            System.out.println("Your lives remain: " + gp.player.lives);
             if (gp.player.lives == 0) {
                 System.out.println("Game over");
             }
