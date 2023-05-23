@@ -59,6 +59,94 @@ public class CollisionCheck {
 
     }
 
+    public void checkBomb(Entity entity, boolean player) {
+        boolean checkout = false; // check if player is inside bomb or not
+        for (int i = 0; i < gp.bombs.length; ++i) {
+
+            if (gp.bombs[i] != null) {
+
+                // Get entity's solid Area Position
+                entity.solidArea.x = entity.worldX + entity.solidArea.x;
+                entity.solidArea.y = entity.worldY + entity.solidArea.y;
+
+                // Get the bomb's solid Area Position
+                gp.bombs[i].solidArea.x = gp.bombs[i].worldX + gp.bombs[i].solidArea.x;
+                gp.bombs[i].solidArea.y = gp.bombs[i].worldY + gp.bombs[i].solidArea.y;
+
+                switch (entity.action) {
+                    case "up":
+                        entity.solidArea.y -= entity.speed;
+                        if (entity.solidArea.intersects(gp.bombs[i].solidArea)) {
+                            if (player == true) {
+                                if (checkout == false) {
+                                    if (gp.player.worldY - 20 <= gp.bombs[i].worldY
+                                            && gp.player.worldY + 20 <= gp.bombs[i].worldY + gp.tileSize) {
+                                        checkout = false;
+                                    } else {
+                                        checkout = true;
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                    case "down":
+                        entity.solidArea.y += entity.speed;
+                        if (entity.solidArea.intersects(gp.bombs[i].solidArea)) {
+                            if (player == true) {
+                                if (checkout == false) {
+                                    if (gp.player.worldY + 20 >= gp.bombs[i].worldY
+                                            && gp.player.worldY - 20 <= gp.bombs[i].worldY + gp.tileSize) {
+                                        checkout = false;
+                                    } else {
+                                        checkout = true;
+
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                    case "left":
+                        entity.solidArea.x -= entity.speed;
+                        if (entity.solidArea.intersects(gp.bombs[i].solidArea)) {
+                            if (player == true) {
+                                if (checkout == false) {
+                                    if (gp.player.worldX - 15 <= gp.bombs[i].worldX
+                                            && gp.player.worldX + 15 <= gp.bombs[i].worldX + gp.tileSize) {
+                                        checkout = false;
+                                    } else {
+                                        checkout = true;
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                    case "right":
+                        entity.solidArea.x += entity.speed;
+                        if (entity.solidArea.intersects(gp.bombs[i].solidArea)) {
+                            if (player == true) {
+                                if (checkout == false) {
+                                    if (gp.player.worldX + 15 >= gp.bombs[i].worldX
+                                            && gp.player.worldX - 15 <= gp.bombs[i].worldX + gp.tileSize) {
+                                        checkout = false;
+                                    } else {
+                                        checkout = true;
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                }
+                entity.solidArea.x = entity.solidAreaDefaultX;
+                entity.solidArea.y = entity.solidAreaDefaultY;
+                gp.bombs[i].solidArea.x = gp.bombs[i].solidAreaDefaultX;
+                gp.bombs[i].solidArea.y = gp.bombs[i].solidAreaDefaultY;
+            }
+        }
+        if (checkout == true) {
+            entity.collisionOn = true;
+        }
+    }
+
     public int checkObject(Entity entity, boolean player) {
         int index = 999;
         boolean checkout = false; // check if player is inside bomb or not

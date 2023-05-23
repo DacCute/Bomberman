@@ -6,15 +6,17 @@ import java.awt.image.BufferedImage;
 import main.GamePanel;
 
 public class Entity {
-    GamePanel gp;
+    protected GamePanel gp;
 
     public int worldX, worldY;
     public int speed = 4;
     public int speed_count = 0;
-    public int power;
+    public int power = 1;
     public int power_count = 0;
     public int lives;
     public int lives_count = 0;
+    public int score = 0;
+    public int bomb_count = 1;
 
     // public int index;
 
@@ -24,7 +26,7 @@ public class Entity {
     public int spriteCounter = 0;
     public int spriteNum = 1;
 
-    public Rectangle solidArea;
+    public Rectangle solidArea = new Rectangle(0, 0, 48, 48);
     // public int x, y;
     public int solidAreaDefaultX, solidAreaDefaultY;
     public boolean collisionOn = false;
@@ -55,7 +57,6 @@ public class Entity {
                     if (spriteNum == 2) {
                         image = up2;
                     }
-
                     break;
                 case "left":
                     if (spriteNum == 1) {

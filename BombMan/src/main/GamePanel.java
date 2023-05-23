@@ -7,6 +7,8 @@ import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
+import bomb.Bomb;
+import bomb.Explode;
 import entity.Monster;
 import entity.Player;
 import object.SuperObject;
@@ -33,15 +35,20 @@ public class GamePanel extends JPanel implements Runnable {
 
     public TileManager tileM = new TileManager(this);
     KeyHandler keyH = new KeyHandler();
+    Sound sound = new Sound();
     Thread gameThread;
 
     public CollisionCheck Colcheck = new CollisionCheck(this);
 
     public Player player = new Player(this, keyH);
 
+    public Bomb bombs[] = new Bomb[10];
+    public Explode[] explodes = new Explode[40];
+
     public SuperObject obj[] = new SuperObject[20];
     public Monster mons[] = new Monster[10];
     // seting object value
+
     public AssetSetter aSetter = new AssetSetter(this);
     public Random_item gacha = new Random_item(this);
 
@@ -62,8 +69,9 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void setupGame() {
         aSetter.setObject();
+        // aSetter.setMon();
 
-        aSetter.setMon();
+        PlayMusic(7);
 
     }
 
@@ -121,6 +129,20 @@ public class GamePanel extends JPanel implements Runnable {
         }
         // Player drawing
         player.draw(g2);
+
+        // Bombs drawing
+        for (int i = 0; i < bombs.length; i++) {
+            if (bombs[i] != null) {
+                bombs[i].draw(g2, this);
+            }
+        }
+
+        for (int i = 0; i < explodes.length; i++) {
+            if (explodes[i] != null) {
+                explodes[i].draw(g2, this);
+            }
+        }
+
         // Monster drawing
         for (int i = 0; i < mons.length; i++) {
             if (mons[i] != null) {
@@ -130,6 +152,21 @@ public class GamePanel extends JPanel implements Runnable {
 
         g2.dispose();
 
+    }
+
+    public void PlayMusic(int i) {
+        sound.setFile(i);
+        sound.play();
+        sound.loop();
+    }
+
+    public void StopMusic() {
+        sound.stop();
+    }
+
+    public void playSE(int i) {
+        sound.setFile(i);
+        sound.play();
     }
 
 }
