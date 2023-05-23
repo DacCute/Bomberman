@@ -17,7 +17,7 @@ public class Random_item {
     public int random_item(int index, int x, int y) {
         if (index == 2) {
             Random random = new Random();
-            order = random.nextInt(3);
+            order = random.nextInt(10);
             System.out.println(order);
             switch (order) {
                 case 0: {

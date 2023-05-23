@@ -9,8 +9,6 @@ import javax.imageio.ImageIO;
 import bomb.Bomb;
 import main.GamePanel;
 import main.KeyHandler;
-import object.Explode;
-import object.Obj_bomb;
 
 public class Player extends Entity {
 
@@ -50,7 +48,7 @@ public class Player extends Entity {
         speed = 4;
         power = 1;
         action = "down";
-        // index = 3; // Max bomb at the same time
+        bomb_count = 1; // Max bomb at the same time
         getPlayerImage();
 
     }
@@ -74,6 +72,7 @@ public class Player extends Entity {
     }
 
     public void update() {
+        // gp.playSE(1);
         boolean monster_check = gp.Colcheck.check_monster(this, true);
         if (monster_check) {
             lives -= 1;
@@ -101,8 +100,10 @@ public class Player extends Entity {
             int objectIndex = gp.Colcheck.checkObject(this, true);
             gp.Colcheck.checkBomb(this, true);
 
-            if (objectIndex < 3)
+            if (objectIndex < 3) {
                 pickItem(objectIndex);
+                gp.playSE(8);
+            }
 
             // Action after check
             if (collisionOn == false) {
@@ -120,7 +121,6 @@ public class Player extends Entity {
                         worldX += speed;
                         break;
                 }
-
             }
 
             spriteCounter++;
@@ -185,18 +185,13 @@ public class Player extends Entity {
                     image = right2;
                 break;
             case "bomb":
-                // if (gp.obj[3] == null) {
-                // // gp.bombs[0] = new Obj_bomb();
-                // gp.bombs[0].PlantBomb(0);
-                // start = System.nanoTime();
-                // }
-
-                if (gp.bombs[0] == null) {
-                    gp.bombs[0] = new Bomb(gp);
-                    gp.bombs[0].PlantBomb(0);
-                    gp.bombs[0].start = System.nanoTime();
+                for (int i = 0; i < bomb_count; ++i) {
+                    if (gp.bombs[i] == null) {
+                        gp.bombs[i] = new Bomb(gp);
+                        gp.bombs[i].PlantBomb(0);
+                        gp.bombs[i].start = System.nanoTime();
+                    }
                 }
-
                 break;
         }
         if (gp.bombs[0] != null) {
