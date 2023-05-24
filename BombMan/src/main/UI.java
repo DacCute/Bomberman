@@ -16,6 +16,9 @@ public class UI {
     BufferedImage speed_Image;
     BufferedImage lives_Image;
     BufferedImage power_Image;
+    BufferedImage titleNameImage, playButton, quitButton, pointer;
+    public int commandNum = 0;
+	
 
     public UI(GamePanel gp) {
         this.gp = gp;
@@ -28,6 +31,35 @@ public class UI {
         Obj_Power power = new Obj_Power();
         power_Image = power.image;
     }
+    public void getTitleImage() {
+		try {
+			titleNameImage = ImageIO.read(getClass().getResourceAsStream("/titleScreen/gameTitle.png"));
+			playButton = ImageIO.read(getClass().getResourceAsStream("/titleScreen/playButton.png"));
+			quitButton = ImageIO.read(getClass().getResourceAsStream("/titleScreen/quitButton.png"));
+			pointer = ImageIO.read(getClass().getResourceAsStream("/titleScreen/pointer.png"));
+
+			
+		}catch (IOException e) {
+			e.printStackTrace();
+			
+		}
+		
+	}
+    public void drawTileScreen(Graphics2D g2) {
+		g2.setColor(new Color(0,0,0));
+		g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
+		//Title name 
+	    g2.drawImage(titleNameImage,0, 0, gp.screenWidth, gp.tileSize * 11, null);
+		g2.drawImage(playButton, 400, 515, gp.tileSize*6, gp.tileSize* 3, null );
+		g2.drawImage(quitButton, 400, 525 + gp.tileSize*3 - 20, gp.tileSize*6, gp.tileSize* 3 -10, null );
+		if( commandNum == 0) {
+			g2.drawImage(pointer, 400 - 50, 557, gp.tileSize, gp.tileSize, null );
+			
+		} else if (commandNum == 1) {
+			g2.drawImage(pointer, 400 - 50, 567+ gp.tileSize*3 - 20, gp.tileSize, gp.tileSize, null );
+			
+		}
+    } 
 
     public void draw(Graphics2D g2) {
 
