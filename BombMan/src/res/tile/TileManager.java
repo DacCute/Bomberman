@@ -2,13 +2,13 @@ package tile;
 
 import java.awt.Graphics2D;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import javax.imageio.ImageIO;
 
 import main.GamePanel;
+import main.UtilityTool;
 
 public class TileManager {
 
@@ -27,22 +27,26 @@ public class TileManager {
 
     public void getTileImage() {
 
+        for (int i = 0; i <= 4; ++i) { // Number of objects
+            tile[i] = new Tile();
+        }
+        // tile[0].image = ImageIO.read(getClass().getResourceAsStream("grass01.png"));
+        setup(0, "grass01", false);
+        // tile[1].image = ImageIO.read(getClass().getResourceAsStream("steel.png")); //
+        setup(1, "steel", true);
+
+        // tile[2].image = ImageIO.read(getClass().getResourceAsStream("brick.png")); //
+        setup(2, "brick", true);
+    }
+
+    public void setup(int index, String imageName, boolean collision) {
+        UtilityTool uTool = new UtilityTool();
         try {
-            for (int i = 0; i <= 4; ++i) { // Number of objects
-                tile[i] = new Tile();
-            }
-            tile[0].image = ImageIO.read(getClass().getResourceAsStream("grass01.png")); // Grass ground
-
-            tile[1].image = ImageIO.read(getClass().getResourceAsStream("steel.png")); // Unbreakable
-            tile[1].collision = true;
-
-            tile[2].image = ImageIO.read(getClass().getResourceAsStream("brick.png")); // brick = breakable
-            tile[2].collision = true;
-
-            tile[3].image = ImageIO.read(getClass().getResourceAsStream("door.png")); // ghost spawner
-
-        } catch (IOException e) {
-            e.printStackTrace();
+            tile[index].image = ImageIO.read(getClass().getResourceAsStream("/tile/" + imageName + ".png"));
+            tile[index].image = uTool.scaleImage(tile[index].image, gp.tileSize, gp.tileSize);
+            tile[index].collision = collision;
+        } catch (Exception e) {
+            // TODO: handle exception
         }
     }
 
@@ -89,12 +93,38 @@ public class TileManager {
             int screenX = worldX - gp.player.worldX + gp.player.screenX;
             int screenY = worldY - gp.player.worldY + gp.player.screenY;
 
+            // STOP moving the camera at the edge
+            // if (gp.player.screenX > gp.player.worldX) {
+            // screenX = worldX;
+            // }
+            // if (gp.player.screenY > gp.player.worldY) {
+            // screenY = worldY;
+            // }
+            // int RightOffset = gp.screenWidth - gp.player.screenX;
+            // if (RightOffset > gp.worldWidth - gp.player.worldX) {
+            // screenX = gp.screenWidth - (gp.worldWidth - worldX);
+            // }
+            // int BottomOffset = gp.screenHeight - gp.player.screenY;
+            // if (BottomOffset > gp.worldHeight - gp.player.worldY) {
+            // screenY = gp.screenHeight - (gp.worldHeight - worldY);
+            // }
+
             if (worldX + gp.tileSize > gp.player.worldX - gp.player.screenX
                     && worldX - gp.tileSize < gp.player.worldX + gp.player.screenX
                     && worldY + gp.tileSize > gp.player.worldY - gp.player.screenY
                     && worldY - gp.tileSize < gp.player.worldY + gp.player.screenY) {
                 g2.drawImage(tile[tileNum].image, screenX, screenY, gp.tileSize, gp.tileSize, null);
             }
+            // } else {
+            // if (gp.player.screenX > gp.player.worldX || gp.player.screenX >
+            // gp.player.worldY
+            // || RightOffset > gp.worldWidth - gp.player.worldX
+            // || BottomOffset > gp.worldHeight - gp.player.worldY) {
+            // g2.drawImage(tile[tileNum].image, screenX, screenY, gp.tileSize, gp.tileSize,
+            // null);
+            // }
+            // }
+            // ========================================================================
 
             worldCol++;
 

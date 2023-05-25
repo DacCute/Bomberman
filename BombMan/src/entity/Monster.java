@@ -15,7 +15,12 @@ public class Monster extends Entity {
         this.gp = gp;
 
         // name = "Green Monster";
-        speed = 4;
+
+        setDefaultvalues();
+
+    }
+
+    public void setDefaultvalues() {
         action = "up";
 
         solidArea = new Rectangle();
@@ -25,9 +30,7 @@ public class Monster extends Entity {
         solidArea.height = 30;
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
-
         getMonsterImage();
-
     }
 
     public void getMonsterImage() {
@@ -50,7 +53,7 @@ public class Monster extends Entity {
 
     public void setAction() {
         actionLockCounter++;
-        if (actionLockCounter == 40) {
+        if (actionLockCounter == monster_direct) {
 
             Random random = new Random();
             int i = random.nextInt(4) + 1;// pick up a number from 1 to 100

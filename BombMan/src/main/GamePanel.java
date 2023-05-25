@@ -34,29 +34,36 @@ public class GamePanel extends JPanel implements Runnable {
     int FPS = 60;
 
     public TileManager tileM = new TileManager(this);
-    KeyHandler keyH = new KeyHandler();
+    KeyHandler keyH = new KeyHandler(this);
     Sound sound = new Sound();
     public Sound sfx = new Sound();
-    Thread gameThread;
-
+    public Thread gameThread;
     public CollisionCheck Colcheck = new CollisionCheck(this);
 
     public Player player = new Player(this, keyH);
-
     public Bomb bombs[] = new Bomb[10];
     public Explode[] explodes = new Explode[40];
-
     public SuperObject obj[] = new SuperObject[20];
     public Monster mons[] = new Monster[10];
-    // seting object value
 
+    // seting object value
     public AssetSetter aSetter = new AssetSetter(this);
     public Random_item gacha = new Random_item(this);
 
     // Game state
-    public int gameState;
+    public int gameState = 0;
+    public final int titleState = 0;
     public final int playState = 1;
     public final int pauseState = 2;
+    public final int Difficult = 3;
+    public final int ENDGAME = 4;
+    public final int optionState = 5;
+
+    // Choosing difficult mode
+    public int gameDifficult = 0;
+    public final int easy = 1;
+    public final int normal = 2;
+    public final int hard = 3;
 
     // Player position default:
     int playerX = 1;
@@ -77,10 +84,21 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void setupGame() {
+
         aSetter.setObject();
         aSetter.setMon();
 
         PlayMusic(7);
+        if (gameState == playState) {
+            // gameState = playState;
+        } else
+            gameState = titleState;
+
+        // if (gameDifficult > 9) {
+        System.out.println(gameDifficult);
+        // }
+
+        System.out.println(gameDifficult + " From Gamepanel");
 
     }
 
@@ -115,52 +133,61 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void update() {
-        for (int i = 0; i < mons.length; ++i) {
-            if (mons[i] != null)
-                mons[i].update();
+
+        if (gameState == playState) {
+            for (int i = 0; i < mons.length; ++i) {
+                if (mons[i] != null)
+                    mons[i].update();
+            }
+            player.update();
+        } else if (gameState == pauseState) {
+
         }
-        player.update();
 
     }
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-
         Graphics2D g2 = (Graphics2D) g;
-        // Map drawing
-        tileM.draw(g2);
 
-        // Object drawing
-        for (int i = 0; i < obj.length; i++) {
-            if (obj[i] != null) {
-                obj[i].draw(g2, this);
+        if (gameState == titleState) {
+            ui.draw(g2);
+        } else {
+            // Map drawing
+            tileM.draw(g2);
+
+            // Object drawing
+            for (int i = 0; i < obj.length; i++) {
+                if (obj[i] != null) {
+                    obj[i].draw(g2, this);
+                }
             }
-        }
-        // Player drawing
-        player.draw(g2);
+            // Player drawing
+            player.draw(g2);
 
-        // Bombs drawing
-        for (int i = 0; i < bombs.length; i++) {
-            if (bombs[i] != null) {
-                bombs[i].draw(g2, this);
+            // Bombs drawing
+            for (int i = 0; i < player.bomb_count; i++) {
+                if (bombs[i] != null && bombs[i].worldX > 0 && bombs[i].worldY > 0) {
+                    bombs[i].draw(g2, this);
+                    // bombs[i].Duration(i);
+                }
             }
-        }
-
-        for (int i = 0; i < explodes.length; i++) {
-            if (explodes[i] != null) {
-                explodes[i].draw(g2, this);
+            for (int i = 0; i < explodes.length; i++) {
+                if (explodes[i] != null) {
+                    explodes[i].draw(g2, this);
+                }
             }
-        }
 
-        // Monster drawing
-        for (int i = 0; i < mons.length; i++) {
-            if (mons[i] != null) {
-                mons[i].draw(g2, this);
+            // Monster drawing
+            for (int i = 0; i < mons.length; i++) {
+                if (mons[i] != null) {
+                    mons[i].draw(g2, this);
+                }
             }
-        }
 
-        // UI drawing
-        ui.draw(g2);
+            // UI drawing
+            ui.draw(g2);
+        }
 
         g2.dispose();
 

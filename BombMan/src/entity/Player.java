@@ -3,8 +3,6 @@ package entity;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import javax.imageio.ImageIO;
 
 import bomb.Bomb;
 import main.GamePanel;
@@ -13,11 +11,9 @@ import main.KeyHandler;
 public class Player extends Entity {
 
     protected GamePanel gp;
-    KeyHandler keyH;
+    public KeyHandler keyH;
     public final int screenX;
     public final int screenY;
-    // public long start = 0;
-    // public long end = 0;
     int lives_minus = 0;
     // public long score = 0;
 
@@ -28,6 +24,11 @@ public class Player extends Entity {
         screenX = gp.screenWidth / 2 - (gp.tileSize / 2);
         screenY = gp.screenHeight / 2 - (gp.tileSize / 2);
 
+        setDefaultvalues();
+    }
+
+    public void setDefaultvalues() {
+
         solidArea = new Rectangle(0, 0, 34, 30);
         solidArea.x = 10;
         solidArea.y = 14;
@@ -36,38 +37,33 @@ public class Player extends Entity {
         solidArea.width = 28;
         solidArea.height = 28;
 
-        setDefaultvalues();
-        getPlayerImage();
-    }
-
-    public void setDefaultvalues() {
-
         worldX = gp.tileSize * 1;
         worldY = gp.tileSize * 1;
-        lives = 100;
+        hp = 100;
+        lives_minus = 1;
         speed = 4;
         power = 1;
         action = "down";
         bomb_count = 1; // Max bomb at the same time
+
+        lives_count = 0;
+        speed_count = 0;
+        power_count = 0;
+
         getPlayerImage();
 
     }
 
     public void getPlayerImage() {
-        try {
-            up1 = ImageIO.read(getClass().getResourceAsStream("/player/up_1.png"));
-            up2 = ImageIO.read(getClass().getResourceAsStream("/player/up_2.png"));
-            down1 = ImageIO.read(getClass().getResourceAsStream("/player/down_1.png"));
-            down2 = ImageIO.read(getClass().getResourceAsStream("/player/down_2.png"));
-            left1 = ImageIO.read(getClass().getResourceAsStream("/player/left_1.png"));
-            left2 = ImageIO.read(getClass().getResourceAsStream("/player/left_2.png"));
-            right1 = ImageIO.read(getClass().getResourceAsStream("/player/right_1.png"));
-            right2 = ImageIO.read(getClass().getResourceAsStream("/player/right_2.png"));
-            // bomb = ImageIO.read(getClass().getResourceAsStream("/object/bomb.png"));
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        up1 = setup("up_1");
+        up2 = setup("up_2");
+        down1 = setup("down_1");
+        down2 = setup("down_2");
+        left1 = setup("left_1");
+        left2 = setup("left_2");
+        right1 = setup("right_1");
+        right2 = setup("right_2");
 
     }
 
@@ -75,8 +71,12 @@ public class Player extends Entity {
         // gp.playSE(1);
         boolean monster_check = gp.Colcheck.check_monster(this, true);
         if (monster_check) {
-            lives -= 1;
-            System.out.println("your remain lives: " + lives);
+            hp -= monster_atk;
+            if (gp.player.hp <= 0) {
+                gp.player.hp = 0;
+                System.out.println("Game over");
+                gp.ui.GameOver = true;
+            }
         }
 
         if (keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed || keyH.spaceBomb) {
@@ -104,6 +104,16 @@ public class Player extends Entity {
                 pickItem(objectIndex);
                 gp.playSE(8);
             }
+
+            // if (action == "pause") {
+            // System.out.println("pause pls");
+            // if (gp.gameState == gp.playState) {
+            // gp.gameState = gp.pauseState;
+            // } else if (gp.gameState == gp.pauseState) {
+            // gp.gameState = gp.playState;
+            // }
+            // action = "";
+            // }
 
             // Action after check
             if (collisionOn == false) {
@@ -149,7 +159,7 @@ public class Player extends Entity {
                     System.out.println("Speed +1");
                     break;
                 case 2:
-                    this.lives += 100;
+                    this.hp += 100;
                     System.out.println("Lives +100");
             }
         }
@@ -185,21 +195,65 @@ public class Player extends Entity {
                     image = right2;
                 break;
             case "bomb":
-                for (int i = 0; i < bomb_count; ++i) {
-                    if (gp.bombs[i] == null) {
-                        gp.bombs[i] = new Bomb(gp);
-                        gp.bombs[i].PlantBomb(0);
-                        gp.bombs[i].start = System.nanoTime();
-                    }
+                switch (bomb_count) {
+                    case 1:
+                        if (gp.bombs[0] == null) {
+                            gp.bombs[0] = new Bomb(gp);
+                            gp.bombs[0].PlantBomb(0);
+                            gp.bombs[0].start = System.nanoTime();
+                        }
+                        break;
+
+                    case 2:
+                        if (gp.bombs[0] == null) {
+                            System.out.println(1);
+                            gp.bombs[0] = new Bomb(gp);
+                            gp.bombs[0].PlantBomb(0);
+                            gp.bombs[0].start = System.nanoTime();
+                        } else {
+                            if (gp.bombs[1] == null) {
+                                System.out.println(2);
+                                gp.bombs[1] = new Bomb(gp);
+                                gp.bombs[1].PlantBomb(1);
+                                if (gp.bombs[1].worldX == gp.bombs[0].worldX
+                                        && gp.bombs[1].worldY == gp.bombs[0].worldY) {
+                                    System.out.println("false");
+                                    gp.bombs[1] = null;
+                                } else
+                                    gp.bombs[1].start = System.nanoTime();
+                            }
+                        }
+                        break;
                 }
+                action = "";
                 break;
         }
-        if (gp.bombs[0] != null) {
-            // System.out.println("fuck");
-            gp.bombs[0].Duration(0);
+        for (int i = 0; i < bomb_count; ++i) {
+            if (gp.bombs[i] != null) {
+                gp.bombs[i].Duration1(i);
+            }
         }
 
-        g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+        int x = screenX;
+        int y = screenY;
+
+        // if (screenX > worldX) {
+        // x = worldX;
+        // }
+        // if (screenY > worldY) {
+        // y = worldY;
+        // }
+
+        // int RightOffset = gp.screenWidth - screenX;
+        // if (RightOffset > gp.worldWidth - worldX) {
+        // x = gp.screenWidth - (gp.worldWidth - worldX);
+        // }
+        // int BottomOffset = gp.screenHeight - screenY;
+        // if (BottomOffset > gp.worldHeight - worldY) {
+        // y = gp.screenHeight - (gp.worldHeight - worldY);
+        // }
+
+        g2.drawImage(image, x, y, gp.tileSize, gp.tileSize, null);
 
         // g2.dispose(); // same but stronger than System.exit()
 
