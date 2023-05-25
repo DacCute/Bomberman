@@ -3,7 +3,11 @@ package entity;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+
+import javax.imageio.ImageIO;
+
 import main.GamePanel;
+import main.UtilityTool;
 
 public class Entity {
     protected GamePanel gp;
@@ -13,14 +17,17 @@ public class Entity {
     public int speed_count = 0;
     public int power = 1;
     public int power_count = 0;
-    public int lives;
+    public int hp;
     public int lives_count = 0;
+    public int lives_minus = 1;
+    public int monster_atk = 1;
+    public int monster_direct = 40;
     public int score = 0;
     public int bomb_count = 1;
 
     // public int index;
 
-    public BufferedImage up1, up2, down1, down2, left1, left2, right1, right2, bomb, boom;
+    public BufferedImage up1, up2, down1, down2, left1, left2, right1, right2, bomb;
     public String action;
 
     public int spriteCounter = 0;
@@ -35,6 +42,20 @@ public class Entity {
 
     public Entity(GamePanel gp) {
         this.gp = gp;
+    }
+
+    public BufferedImage setup(String imageName) {
+        UtilityTool uTool = new UtilityTool();
+        BufferedImage scaleImage = null;
+
+        try {
+            scaleImage = ImageIO.read(getClass().getResourceAsStream("/player/" + imageName + ".png"));
+            scaleImage = uTool.scaleImage(scaleImage, gp.tileSize, gp.tileSize);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return scaleImage;
     }
 
     public void draw(Graphics2D g2, GamePanel gp) {
@@ -88,6 +109,7 @@ public class Entity {
     }
 
     public void setAction() {
+
     }
 
     public void update() {
