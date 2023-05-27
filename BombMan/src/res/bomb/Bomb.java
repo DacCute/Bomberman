@@ -8,9 +8,9 @@ import entity.Entity;
 import main.GamePanel;
 
 public class Bomb extends Entity {
-    public long start, end;
-    int clock_counter = 0;
-    long wait = 0;
+    private long wait = 0;
+
+    private int sound_clock = 0;
     // KeyHandler keyH;
 
     public Bomb(GamePanel gp) {
@@ -37,33 +37,24 @@ public class Bomb extends Entity {
         gp.bombs[index].worldY = (int) (Math.ceil(y) * gp.tileSize);
     }
 
-    // public void Duration(int index) {
-    // clock_counter++;
-    // System.out.println(clock_counter);
-    // if (clock_counter > 90) {
-    // gp.playSE(4);
-    // Explosion(index);
-    // }
-    // if (clock_counter > 150) {
-    // action = "down";
-    // Bomb_remove(index);
-    // clock_counter = 0;
-    // }
-    // }
-
     public void Duration1(int index) { // DONE
         end = System.nanoTime();
         if (gp.gameState == gp.pauseState) {
             wait = (end - start);
         } else {
             if ((end - wait - start) / 1e9 >= 1.5) {
-                gp.playSE(4);
+                if (sound_clock == 0) {
+                    gp.playSE(4);
+                    sound_clock = 1;
+                }
+
                 Explosion(index);
                 if ((end - wait - start) / 1e9 >= 2) {
                     action = "down";
                     Bomb_remove(index);
                     start = 0;
                     end = 0;
+                    sound_clock = 0;
                 }
             }
         }
@@ -114,14 +105,12 @@ public class Bomb extends Entity {
                     if (gp.tileM.MapTileNum[i][bomb_y] == 2)
                         gp.tileM.MapTileNum[i][bomb_y] = 0;
                     if (obj_x == i) {
-
                         check = true;
                     }
                 } else
                     break;
             }
         }
-        // System.out.println(check);
         return check;
     }
 
@@ -133,6 +122,7 @@ public class Bomb extends Entity {
             if (gp.player.hp <= 0) {
                 gp.player.hp = 0;
                 gp.ui.GameOver = true;
+                gp.playSE(2);
             }
         }
         // KILL monster
@@ -140,13 +130,10 @@ public class Bomb extends Entity {
             if (gp.mons[i] != null) {
                 if (bomb_inside((gp.mons[i].worldX + gp.mons[i].solidArea.width) / gp.tileSize,
                         (gp.mons[i].worldY + gp.mons[i].solidArea.width) / gp.tileSize, x, y)) {
-                    // gp.ui.showMessage(gp.mons[i].hp + "", i);
                     gp.mons[i].hp -= 1;
-                    System.out.println("MONSTER HP: " + gp.mons[i].hp);
                     if (gp.mons[i].hp <= 0) {
                         gp.mons[i] = null;
                     }
-                    // gp.player.score += 100;
                 }
             }
         }
@@ -160,7 +147,7 @@ public class Bomb extends Entity {
         if (monster_count == false) {
             // GAME FINISHED
             gp.ui.GameFinish = true;
-            gp.StopMusic();
+            gp.playSE(1);
             // gp.playSE(); // SOUND CONGRAT
         }
 
@@ -177,7 +164,6 @@ public class Bomb extends Entity {
         y /= gp.tileSize;
 
         kill(x, y);
-
     }
 
     public void expanding(int x, int y, int index) {
@@ -185,8 +171,8 @@ public class Bomb extends Entity {
         while (gp.explodes[index] != null) {
             if (gp.explodes[index].worldX / gp.tileSize == x && gp.explodes[index].worldY / gp.tileSize == y) {
                 break;
-            }
-            index += 1;
+            } else
+                index += 1;
         }
         gp.explodes[index] = new Explode(gp);
 

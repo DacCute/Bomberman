@@ -35,14 +35,14 @@ public class Monster extends Entity {
 
     public void getMonsterImage() {
         try {
-            up1 = ImageIO.read(getClass().getResourceAsStream("/monster/mon.png"));
-            up2 = ImageIO.read(getClass().getResourceAsStream("/monster/mon2.png"));
-            down1 = ImageIO.read(getClass().getResourceAsStream("/monster/mon.png"));
-            down2 = ImageIO.read(getClass().getResourceAsStream("/monster/mon2.png"));
-            left1 = ImageIO.read(getClass().getResourceAsStream("/monster/mon.png"));
-            left2 = ImageIO.read(getClass().getResourceAsStream("/monster/mon2.png"));
-            right1 = ImageIO.read(getClass().getResourceAsStream("/monster/mon.png"));
-            right2 = ImageIO.read(getClass().getResourceAsStream("/monster/mon2.png"));
+            up1 = ImageIO.read(getClass().getResourceAsStream("/monster/mon_l.png"));
+            up2 = ImageIO.read(getClass().getResourceAsStream("/monster/mon2_l.png"));
+            down1 = ImageIO.read(getClass().getResourceAsStream("/monster/mon_l.png"));
+            down2 = ImageIO.read(getClass().getResourceAsStream("/monster/mon2_l.png"));
+            left1 = ImageIO.read(getClass().getResourceAsStream("/monster/mon_l.png"));
+            left2 = ImageIO.read(getClass().getResourceAsStream("/monster/mon2_l.png"));
+            right1 = ImageIO.read(getClass().getResourceAsStream("/monster/mon_r.png"));
+            right2 = ImageIO.read(getClass().getResourceAsStream("/monster/mon2_r.png"));
 
         } catch (IOException e) {
 

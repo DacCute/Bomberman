@@ -11,6 +11,7 @@ import bomb.Bomb;
 import bomb.Explode;
 import entity.Monster;
 import entity.Player;
+import object.Random_item;
 import object.SuperObject;
 import tile.TileManager;
 
@@ -34,7 +35,7 @@ public class GamePanel extends JPanel implements Runnable {
     int FPS = 60;
 
     public TileManager tileM = new TileManager(this);
-    KeyHandler keyH = new KeyHandler(this);
+    public KeyHandler keyH = new KeyHandler(this);
     Sound sound = new Sound();
     public Sound sfx = new Sound();
     public Thread gameThread;
@@ -43,32 +44,28 @@ public class GamePanel extends JPanel implements Runnable {
     public Player player = new Player(this, keyH);
     public Bomb bombs[] = new Bomb[10];
     public Explode[] explodes = new Explode[40];
-    public SuperObject obj[] = new SuperObject[20];
+    public SuperObject obj[] = new SuperObject[10];
     public Monster mons[] = new Monster[10];
 
     // seting object value
-    public AssetSetter aSetter = new AssetSetter(this);
+    protected AssetSetter aSetter = new AssetSetter(this);
     public Random_item gacha = new Random_item(this);
 
     // Game state
     public int gameState = 0;
-    public final int titleState = 0;
+    protected final int titleState = 0;
     public final int playState = 1;
     public final int pauseState = 2;
-    public final int Difficult = 3;
-    public final int ENDGAME = 4;
-    public final int optionState = 5;
+    protected final int Difficult = 3;
+    protected final int ENDGAME = 4;
+    protected final int Character = 5;
 
     // Choosing difficult mode
-    public int gameDifficult = 0;
-    public final int easy = 1;
-    public final int normal = 2;
-    public final int hard = 3;
-
-    // Player position default:
-    int playerX = 1;
-    int playerY = 1;
-    int playerSpeed = 4;
+    // protected int gameDifficult = 0;
+    protected Setting_Difficult gameDifficult = new Setting_Difficult(this);
+    protected final int easy = 1;
+    protected final int normal = 2;
+    protected final int hard = 3;
 
     // UI
     public UI ui = new UI(this);
@@ -87,19 +84,26 @@ public class GamePanel extends JPanel implements Runnable {
 
         aSetter.setObject();
         aSetter.setMon();
+        ui.playTime = 0;
+        PlayMusic(0);
 
-        PlayMusic(7);
+        if (keyH.skin_play != null) {
+            player.character = keyH.skin_play;
+            player.getPlayerImage();
+        }
+
+        if (player.character == null) {
+            player.character = "boy/";
+        }
+
         if (gameState == playState) {
-            // gameState = playState;
+            if (keyH.diff > 0) {
+                gameDifficult.difficult = keyH.diff;
+                gameDifficult.setDifficult(gameDifficult.difficult);
+            }
+
         } else
             gameState = titleState;
-
-        // if (gameDifficult > 9) {
-        System.out.println(gameDifficult);
-        // }
-
-        System.out.println(gameDifficult + " From Gamepanel");
-
     }
 
     public void startGameThread() {
@@ -159,22 +163,22 @@ public class GamePanel extends JPanel implements Runnable {
             // Object drawing
             for (int i = 0; i < obj.length; i++) {
                 if (obj[i] != null) {
-                    obj[i].draw(g2, this);
+                    obj[i].draw(g2, this, 2);
                 }
             }
             // Player drawing
+            player.character = keyH.skin_play;
             player.draw(g2);
 
             // Bombs drawing
             for (int i = 0; i < player.bomb_count; i++) {
                 if (bombs[i] != null && bombs[i].worldX > 0 && bombs[i].worldY > 0) {
                     bombs[i].draw(g2, this);
-                    // bombs[i].Duration(i);
                 }
             }
             for (int i = 0; i < explodes.length; i++) {
                 if (explodes[i] != null) {
-                    explodes[i].draw(g2, this);
+                    explodes[i].draw(g2, this, 1);
                 }
             }
 

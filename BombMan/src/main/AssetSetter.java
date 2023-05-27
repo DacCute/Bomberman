@@ -1,5 +1,7 @@
 package main;
 
+import java.util.Random;
+
 import entity.Monster;
 
 public class AssetSetter {
@@ -10,29 +12,38 @@ public class AssetSetter {
     }
 
     public void setObject() {
+        // SETIING BEFORE START GAME
+    }
 
-        // gp.obj[0] = new Obj_Power(); // Increase bomb scale
-        // gp.obj[0].worldX = 11 * gp.tileSize;
-        // gp.obj[0].worldY = 6 * gp.tileSize;
+    public int Random_x() {
+        Random random = new Random();
+        int x;
+        x = random.nextInt(27);
+        return x;
+    }
 
-        // gp.obj[1] = new Obj_Speed(); // Increase speed running
-        // gp.obj[1].worldX = 13 * gp.tileSize;
-        // gp.obj[1].worldY = 8 * gp.tileSize;
-
-        // gp.obj[2] = new Obj_lives(); // Increase lives
-        // gp.obj[2].worldX = 2 * gp.tileSize;
-        // gp.obj[2].worldY = 4 * gp.tileSize;
-
+    public int Random_y() {
+        Random random = new Random();
+        int y;
+        y = random.nextInt(12);
+        return y;
     }
 
     public void setMon() {
-        gp.mons[0] = new Monster(gp);
-        gp.mons[0].worldX = gp.tileSize * 3;
-        gp.mons[0].worldY = gp.tileSize * 4;
+        int x;
+        int y;
 
-        gp.mons[1] = new Monster(gp);
-        gp.mons[1].worldX = gp.tileSize * 5;
-        gp.mons[1].worldY = gp.tileSize * 3;
+        for (int i = 0; i < 3; ++i) {
+            x = Random_x();
+            y = Random_y();
+            while (gp.tileM.MapTileNum[x][y] != 0) {
+                x = Random_x();
+                y = Random_y();
+            }
+            gp.mons[i] = new Monster(gp);
+            gp.mons[i].worldX = gp.tileSize * x;
+            gp.mons[i].worldY = gp.tileSize * y;
+        }
 
     }
 }

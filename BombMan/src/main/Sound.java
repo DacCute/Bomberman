@@ -10,17 +10,13 @@ public class Sound {
 
     Clip clip;
 
-    URL soundURL[] = new URL[30];
+    URL soundURL[] = new URL[15];
 
     public Sound() {
-        soundURL[0] = getClass().getResource("/sound/start_game.wav");
-        soundURL[1] = getClass().getResource("/sound/bomberman.wav");
-        soundURL[2] = getClass().getResource("/sound/footstep_sound.wav");
-        soundURL[3] = getClass().getResource("/sound/monster_attacked.wav");
-        soundURL[4] = getClass().getResource("/sound/bomb1.wav");
-        soundURL[5] = getClass().getResource("/sound/congrat.wav");
-        soundURL[6] = getClass().getResource("/sound/end_game.wav");
-        soundURL[7] = getClass().getResource("/sound/BGM2.wav");
+        soundURL[0] = getClass().getResource("/sound/BGM2.wav");
+        soundURL[1] = getClass().getResource("/sound/Clear.wav");
+        soundURL[2] = getClass().getResource("/sound/Over.wav");
+        soundURL[4] = getClass().getResource("/sound/bomb_sound.wav");
         soundURL[8] = getClass().getResource("/sound/coin.wav");
     }
 

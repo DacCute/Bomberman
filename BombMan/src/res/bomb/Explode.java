@@ -14,8 +14,8 @@ public class Explode extends SuperObject {
         name = "explode";
         try {
             img_path = "/object/explode.png";
-            image = ImageIO.read(getClass().getResourceAsStream(img_path));
-            uTool.scaleImage(image, gp.tileSize, gp.tileSize);
+            image1 = ImageIO.read(getClass().getResourceAsStream(img_path));
+            uTool.scaleImage(image1, gp.tileSize, gp.tileSize);
 
         } catch (IOException e) {
             e.printStackTrace();

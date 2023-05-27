@@ -55,15 +55,14 @@ public class Player extends Entity {
     }
 
     public void getPlayerImage() {
-
-        up1 = setup("up_1");
-        up2 = setup("up_2");
-        down1 = setup("down_1");
-        down2 = setup("down_2");
-        left1 = setup("left_1");
-        left2 = setup("left_2");
-        right1 = setup("right_1");
-        right2 = setup("right_2");
+        up1 = setup(character + "up_1");
+        up2 = setup(character + "up_2");
+        down1 = setup(character + "down_1");
+        down2 = setup(character + "down_2");
+        left1 = setup(character + "left_1");
+        left2 = setup(character + "left_2");
+        right1 = setup(character + "right_1");
+        right2 = setup(character + "right_2");
 
     }
 
@@ -74,7 +73,6 @@ public class Player extends Entity {
             hp -= monster_atk;
             if (gp.player.hp <= 0) {
                 gp.player.hp = 0;
-                System.out.println("Game over");
                 gp.ui.GameOver = true;
             }
         }
@@ -104,16 +102,6 @@ public class Player extends Entity {
                 pickItem(objectIndex);
                 gp.playSE(8);
             }
-
-            // if (action == "pause") {
-            // System.out.println("pause pls");
-            // if (gp.gameState == gp.playState) {
-            // gp.gameState = gp.pauseState;
-            // } else if (gp.gameState == gp.pauseState) {
-            // gp.gameState = gp.playState;
-            // }
-            // action = "";
-            // }
 
             // Action after check
             if (collisionOn == false) {
@@ -152,15 +140,12 @@ public class Player extends Entity {
             switch (index) {
                 case 0:
                     this.power += 1;
-                    System.out.println("Power +1");
                     break;
                 case 1:
                     this.speed += 2;
-                    System.out.println("Speed +1");
                     break;
                 case 2:
-                    this.hp += 100;
-                    System.out.println("Lives +100");
+                    this.hp += 40;
             }
         }
     }
@@ -206,18 +191,15 @@ public class Player extends Entity {
 
                     case 2:
                         if (gp.bombs[0] == null) {
-                            System.out.println(1);
                             gp.bombs[0] = new Bomb(gp);
                             gp.bombs[0].PlantBomb(0);
                             gp.bombs[0].start = System.nanoTime();
                         } else {
                             if (gp.bombs[1] == null) {
-                                System.out.println(2);
                                 gp.bombs[1] = new Bomb(gp);
                                 gp.bombs[1].PlantBomb(1);
                                 if (gp.bombs[1].worldX == gp.bombs[0].worldX
                                         && gp.bombs[1].worldY == gp.bombs[0].worldY) {
-                                    System.out.println("false");
                                     gp.bombs[1] = null;
                                 } else
                                     gp.bombs[1].start = System.nanoTime();
