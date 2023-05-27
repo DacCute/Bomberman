@@ -12,18 +12,27 @@ import main.UtilityTool;
 public class Entity {
     protected GamePanel gp;
 
-    public int worldX, worldY;
+    public String character = "boy/";
+
+    public int worldX, worldY; // WORlD MAP
     public int speed = 4;
     public int speed_count = 0;
+
     public int power = 1;
     public int power_count = 0;
+
     public int hp;
     public int lives_count = 0;
     public int lives_minus = 1;
+
     public int monster_atk = 1;
     public int monster_direct = 40;
+
     public int score = 0;
     public int bomb_count = 1;
+
+    protected long start;
+    protected long end;
 
     // public int index;
 
@@ -34,7 +43,6 @@ public class Entity {
     public int spriteNum = 1;
 
     public Rectangle solidArea = new Rectangle(0, 0, 48, 48);
-    // public int x, y;
     public int solidAreaDefaultX, solidAreaDefaultY;
     public boolean collisionOn = false;
 
