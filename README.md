@@ -27,10 +27,10 @@ This is our Bomberman project for the Object-Oriented Programming course at HCMI
 |Order|Name |Student ID|Tasks|
 |-|-|-|-|
 |1|Nguyen Tri Vinh (L)  |      |
-|2|Chau||      |
-|3|Hang||
-|4|Hiu||
-|5|Cai Kim Dat (C)|MAMAIU21040|Do anything|
+|2|Nguyen Thi Minh Chau||      |
+|3|Trinh Le Bich Hang||
+|4|Le Duy Hieu||
+
 
 
 
