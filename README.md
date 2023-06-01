@@ -1,4 +1,9 @@
-# Bomberman<!-- omit in toc -->
+[![Contributors][contributors-shield]][contributors-url]
+[![Forks][forks-shield]][forks-url]
+[![Stargazers][stars-shield]][stars-url]
+[![Issues][issues-shield]][issues-url]
+
+# Bomberman
 
 <!-- Image demo of project -->
 
@@ -8,7 +13,7 @@ This project is making a game which is inspired by [Super Bomberman](https://www
 <br /><sub>This project is now developing!</sub>
 
 <!-- List of content -->
-## What will be appeared in this project<!-- omit in toc -->
+## What will be appeared in this project
 - [Introduction](#introduction)
 - [About the Game](#about-the-game)
 - [UML](#uml)
@@ -23,7 +28,7 @@ This is our Bomberman project for the Object-Oriented Programming course at HCMI
 
 We hope you enjoy it!
 
-### Team members<!-- omit in toc -->
+### Team members
 
 <!-- name table -->
 |Order|Name |Student ID|Tasks|
@@ -39,12 +44,11 @@ We hope you enjoy it!
 <!-- ABOUT THE GAME -->
 ## About the Game
 The aim of Bomberman is to strategically plant bombs to eliminate obstacles and opponents while avoiding getting caught in the blast. The ultimate goal is to progress through levels, defeat the boss, and become the last player standing. The game requires quick thinking, problem-solving skills, and strategic planning to succeed.
-### Interface<!-
+### Interface
 
 ![image](https://github.com/DacCute/Bomberman/assets/117237472/c0e45dca-9d1e-4654-8489-3e8b03eeec9d)
 
-
-### Gameplay<!-- omit in toc -->
+### Gameplay
 
 <!-- ABOUT UML -->
 
