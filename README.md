@@ -29,7 +29,7 @@ We hope you enjoy it!
 |Order|Name |Student ID|Tasks|
 |-|-|-|-|
 |1|Nguyen Tri Vinh (L)  | ITITIU21345  |
-|2|Nguyen Thi Minh Chau|| ITITIU21164  |
+|2|Nguyen Thi Minh Chau| ITITIU21164  |
 |3|Trinh Le Bich Hang| ITITIU21164  |
 |4|Le Duy Hieu| ITITIU21200 |
 
